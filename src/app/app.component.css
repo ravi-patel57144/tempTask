@@ -1,21 +1,21 @@
 .icon-container {
-    display: flex;
-    gap: 10px;
-    font-size: 24px;
-    align-items: center;
-    justify-content: center;
-  }
-  
-  .highlight {
-    color: red;
-    background-color: yellow;
-  }
-  
-  .hidden-text {
-    position: relative;
-    opacity: 0;
-    pointer-events: none;
-    user-select: text;
-    font-size: 0.1px;
-  }
-  
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  font-size: 50px;
+  align-items: center;
+  justify-content: center;
+}
+
+.icon-container .highlight {
+  color: red !important;
+  background-color: yellow !important;
+}
+
+.hidden-text {
+  position: relative;
+  opacity: 0;
+  pointer-events: none;
+  user-select: text;
+  font-size: 0.1px;
+}

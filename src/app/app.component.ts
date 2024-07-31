@@ -8,40 +8,51 @@ import { Component, Renderer2, AfterViewInit, ElementRef } from '@angular/core';
 export class AppComponent implements AfterViewInit {
   title = 'tempTask';
 
+  private observer!: MutationObserver;
+
   constructor(private renderer: Renderer2, private el: ElementRef) {}
 
   ngAfterViewInit(): void {
-    this.highlightOnSearch();
-
-    // this.setupSearchInput();
+    console.log('ngAfterViewInit executed');
+    this.initHighlighting();
   }
 
-  highlightOnSearch(): void {
-    const observer = new MutationObserver(() => {
+  initHighlighting(): void {
+    this.createObserver();
+    this.setupSelectionChangeListener();
+  }
+
+  createObserver(): void {
+    this.observer = new MutationObserver(() => {
       this.checkHighlight();
     });
 
-    const config = { characterData: true, subtree: true, childList: true };
-    observer.observe(document.body, config);
+    const config = { characterData: true, subtree: true, childList: true, attributes: false };
+    this.observer.observe(this.el.nativeElement, config);
+  }
 
+  setupSelectionChangeListener(): void {
     document.addEventListener('selectionchange', () => {
       this.checkHighlight();
     });
   }
 
   checkHighlight(): void {
-    const hiddenTexts = this.el.nativeElement.querySelectorAll('.hidden-text');
+    const hiddenTexts = this.el.nativeElement.querySelectorAll('.hidden-text') as NodeListOf<HTMLElement>;
+    
+    const icons = this.el.nativeElement.querySelectorAll('.icon-container i') as NodeListOf<HTMLElement>;
+    icons.forEach((icon: HTMLElement) => this.renderer.removeClass(icon, 'highlight'));
+
     hiddenTexts.forEach((text: HTMLElement) => {
       const iconName = text.textContent?.trim();
       if (iconName) {
-        const icon = this.el.nativeElement.querySelector(`[data-name="${iconName}"]`);
-        if (icon) {
+        const iconsToHighlight = this.el.nativeElement.querySelectorAll(`[data-name="${iconName}"]`) as NodeListOf<HTMLElement>;
+        iconsToHighlight.forEach((icon: HTMLElement) => {
           if (this.isTextHighlighted(text)) {
             this.renderer.addClass(icon, 'highlight');
-          } else {
-            this.renderer.removeClass(icon, 'highlight');
+            console.log("Icon highlighted:", iconName);
           }
-        }
+        });
       }
     });
   }
@@ -58,25 +69,4 @@ export class AppComponent implements AfterViewInit {
     }
     return false;
   }
-
-  // setupSearchInput(): void {
-  //   const searchInput = this.el.nativeElement.querySelector('#search-input');
-
-  //   searchInput.addEventListener('input', (event: any) => {
-  //     const searchText = event.target.value.trim().toLowerCase();
-  //     this.highlightIcons(searchText);
-  //   });
-  // }
-
-  // highlightIcons(searchText: string): void {
-  //   const icons = this.el.nativeElement.querySelectorAll('.icon-container i');
-  //   icons.forEach((icon: HTMLElement) => {
-  //     const iconName = icon.getAttribute('data-name');
-  //     if (iconName && iconName.toLowerCase().includes(searchText)) {
-  //       this.renderer.addClass(icon, 'highlight');
-  //     } else {
-  //       this.renderer.removeClass(icon, 'highlight');
-  //     }
-  //   });
-  // }
 }
