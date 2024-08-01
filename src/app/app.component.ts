@@ -41,14 +41,20 @@ export class AppComponent implements AfterViewInit {
     const hiddenTexts = this.el.nativeElement.querySelectorAll('.hidden-text') as NodeListOf<HTMLElement>;
     
     const icons = this.el.nativeElement.querySelectorAll('.icon-container i') as NodeListOf<HTMLElement>;
-    icons.forEach((icon: HTMLElement) => this.renderer.removeClass(icon, 'highlight'));
-
+    // icons.forEach((icon: HTMLElement) => this.renderer.removeClass(icon, 'highlight'));
+    
     hiddenTexts.forEach((text: HTMLElement) => {
       const iconName = text.textContent?.trim();
+      console.log(iconName);
       if (iconName) {
         const iconsToHighlight = this.el.nativeElement.querySelectorAll(`[data-name="${iconName}"]`) as NodeListOf<HTMLElement>;
         iconsToHighlight.forEach((icon: HTMLElement) => {
           if (this.isTextHighlighted(text)) {
+            const exist_icon = this.el.nativeElement.getElementsByClassName('.highlight') as NodeListOf<HTMLElement>;
+            if(exist_icon){
+              icons.forEach((icon: HTMLElement) => this.renderer.removeClass(icon, 'highlight'));
+            }
+            console.log('ok', exist_icon);
             this.renderer.addClass(icon, 'highlight');
             console.log("Icon highlighted:", iconName);
           }
